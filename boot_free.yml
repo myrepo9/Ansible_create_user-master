@@ -1,0 +1,10 @@
+---
+- name: Ping all hosts
+  hosts: all
+  gather_facts: true
+  tasks:
+    - ping:
+    - shell: df -mh /boot | awk '{print $4}' | xargs -n 2
+      register: data
+
+    - debug: msg="{{ data.stdout }}"

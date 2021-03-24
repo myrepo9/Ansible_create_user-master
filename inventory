@@ -1,0 +1,8 @@
+[all]
+172.18.0.2
+172.18.0.3
+172.18.0.4
+[all:vars]
+ansible_connection = ssh
+ansible_user = lcharlin
+ansible_ssh_private_key_file = ~/.ssh/lcharlin.ppk

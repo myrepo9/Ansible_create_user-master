@@ -1,0 +1,10 @@
+---
+- name: Ping all hosts
+  hosts: all
+  gather_facts: true
+  tasks:
+    - ping:
+    - command: hostname
+      register: data
+
+    - debug: msg="{{ data.stdout }}"

@@ -1,0 +1,22 @@
+---
+- name: Create New User no sudo
+  hosts: all
+  gather_facts: no
+  become: true
+  tasks:
+    - include_vars:
+        file: group_vars/users
+
+    - name: Create New User
+      raw: useradd -m {{ item.user_name }}
+      with_items: "{{ users }}"
+
+    - name: Add ssh user key
+      raw: mkdir /home/{{ item.user_name }}/.ssh;
+           echo -e "#Created by Ansible raw-no-sudo-user\n\n{{ item.user_key }}" > /home/{{ item.user_name }}/.ssh/authorized_keys;
+           chmod 600 /home/{{ item.user_name }}/.ssh/authorized_keys;
+           chmod 700 /home/{{ item.user_name }}/.ssh;
+           chown -R {{ item.user_name }}:{{ item.user_name }} /home/{{ item.user_name }}/.ssh
+      with_items: "{{ users }}"
+
+...

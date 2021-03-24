@@ -1,0 +1,25 @@
+---
+- name: Create New User
+  hosts: all
+  gather_facts: no
+  become: true
+  tasks:
+    - include_vars:
+        file: group_vars/users
+
+    - name: Create a new user
+      raw: useradd -m {{ item.user_name }};
+           echo {{ item.user_name }}:9g#TjiYT | chpasswd
+      with_items: "{{ users }}"
+
+    - name: Add ssh user key
+      raw: mkdir /home/{{ item.user_name }}/.ssh;
+           echo -e "#Created by Ansible raw-add-to-sudoers\n\n{{ item.user_key }}" > /home/{{ item.user_name }}/.ssh/authorized_keys;
+           chmod 600 /home/{{ item.user_name }}/.ssh/authorized_keys;
+           chmod 700 /home/{{ item.user_name }}/.ssh;
+           chown -R {{ item.user_name }}:{{ item.user_name }} /home/{{ item.user_name }}/.ssh;
+           echo "{{ item.user_name }}  ALL=(ALL) NOPASSWD:ALL" | tee /etc/sudoers.d/{{ item.user_name }};
+           chmod 440 /etc/sudoers.d/{{ item.user_name }}
+      with_items: "{{ users }}"
+
+...
