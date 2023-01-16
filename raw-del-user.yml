@@ -1,0 +1,15 @@
+---
+- name: Delete users
+  hosts: all
+  gather_facts: no
+  become: true
+  tasks:
+    - include_vars:
+        file: group_vars/users
+
+    - name: Delete user from host
+      raw: userdel {{ item.user_name }};
+           rm -rf /home/{{ item.user_name }}
+      with_items: "{{ users }}"
+
+...
